@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Fechamento de Cargas</title>
+
+<style>
+
+
+.campo-destaque {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* esquerda */
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.campo-destaque input {
+  font-weight: normal; /* só o título fica em negrito */
+}
+
+.campo input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#funruralValor {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.sidebar {
+  width: 280px;
+}
+
+.info-box {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  height: fit-content; /* 🔥 remove altura fixa */
+}
+
+.info-box div {
+  font-size: 14px;
+}
+
+.top-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: #e3f2fd; /* 🔵 azul claro */
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-action {
+  display: flex;
+  align-items: center;
+}
+
+#salvarBtn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+
+  background: #1976d2;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#salvarBtn:hover {
+  background: #0d47a1;
+}
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  margin: 30px;
+}
+
+.box {
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* BLOCO TOPO */
+.topo {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.topo .linha {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* BLOCO INFERIOR */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.direita input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.esquerda {
+  flex: 3;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.direita {
+  flex: 2;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.funrural-bloco {
+  margin-top: 30px; /* cria o “respiro” (equivalente a 2 linhas) */
+}
+
+/* BLOCOS INTERNOS */
+.bloco {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.titulo {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.linha-opcao {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 5px;
+  align-items: center;
+}
+
+.linha-ajuste {
+  display: flex;
+  gap: 10px;
+}
+
+.linha-ajuste input {
+  flex: 1;
+}
+
+input[readonly] {
+  background: #f0f0f0;
+}
+
+/* COR VERDE */
+.preenchido {
+  background: #baddbc !important;
+  border: 1px solid #091601;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <!-- BLOCO 1 -->
+  <div class="topo">
+    <div class="linha">
+
+      <div class="campo">
+        <label>Quantidade</label>
+        <input id="quantidade" readonly>
+      </div>
+
+      <div class="campo">
+        <label>Peso</label>
+        <input id="peso" readonly>
+      </div>
+
+      <div class="campo">
+        <label>Preço</label>
+        <input id="preco" readonly>
+      </div>
+
+      <div class="campo">
+        <label>Peso Médio</label>
+        <input id="pesoMedio" readonly>
+      </div>
+
+    </div>
+  </div>
+
+<div class="top-info">
+
+  <div class="info-text">
+    <div><strong>Comprador:</strong> <span id="comprador"></span></div>
+    <div><strong>Fornecedor:</strong> <span id="fornecedor"></span></div>
+    <div><strong>Frete:</strong> <span id="frete"></span></div>
+  </div>
+
+  <div class="info-action">
+    <button id="salvarBtn">Salvar</button>
+  </div>
+
+</div>
+
+  <!-- BLOCO 2 + 3 -->
+  <div class="container">
+
+
+    <!-- ESQUERDA -->
+    <div class="esquerda" id="blocos"></div>
+
+    <!-- DIREITA -->
+    <div class="direita">
+         
+
+      <div class="campo-destaque">
+         <span>Valor Bruto</span>
+         <input id="valorBruto">
+     </div>
+        
+
+      <br>
+     <div class="campo-destaque">
+       <span>Total das Condenações</span>
+       <input id="totalCondenacoes">
+     </div>
+
+      <div class="bloco">
+
+  <br>
+<div class="bloco">
+
+  <div class="titulo">Funrural / Senar</div>
+
+  <div class="linha-opcao">
+    <label><input type="radio" name="funrural" value="sem" checked> Nenhum</label>
+    <label><input type="radio" name="funrural" value="senar"> Apenas Senar (0,2%)</label>
+    <label><input type="radio" name="funrural" value="aliquota"> Alíquota Efetiva (1,63%)</label>
+  </div>
+
+  <div class="campo">
+    <input id="funruralValor" placeholder="R$" readonly>
+  </div>
+
+</div>
+
+<div class="bloco">
+  <div class="titulo">Outros Descontos</div>
+  <input id="outrosDescontos" placeholder="R$">
+</div>
+
+<div class="bloco">
+  <div class="titulo">Valor Líquido</div>
+  <input id="valorLiquido" placeholder="R$" readonly>
+</div>
+
+    </div>
+
+  </div>
+
+
+
+<script>
+
+// CONFIG DOS BLOCOS
+const blocos = [
+  { nome: "Mortos em Transporte", id: "mortos" },
+  { nome: "Condenações Parciais", id: "condParciais" },
+  { nome: "Condenações Totais", id: "condTotais" },
+  { nome: "Embutido / Cozido", id: "embutido" }
+]
+
+// RENDER HTML
+document.getElementById("blocos").innerHTML =
+  blocos.map(b => `
+  <div class="bloco">
+    <div class="titulo">${b.nome}</div>
+
+    <div class="linha-opcao">
+      <span>Calcular por peso médio</span>
+      <label><input type="checkbox" id="${b.id}Sim"> Sim</label>
+      <label><input type="checkbox" id="${b.id}Nao" checked> Não</label>
+    </div>
+
+    <div class="linha-ajuste">
+      <input id="${b.id}" placeholder="Qtd">
+      <input id="${b.id}Kg" placeholder="Kg">
+      <input id="${b.id}Valor" placeholder="R$">
+    </div>
+  </div>
+`).join("")
+
+// FUNÇÕES
+function calcularMedia(qtd, pesoMedio){
+  return qtd * pesoMedio
+}
+
+function calcularValor(kg, preco){
+  return kg * preco
+}
+
+function atualizarCor(el){
+  if (el.value && Number(el.value) > 0) {
+    el.classList.add("preenchido")
+  } else {
+    el.classList.remove("preenchido")
+  }
+}
+
+function aplicarCalculos(){
+
+  const preco = Number(precoInput.value || 0)
+  const pesoMedio = Number(pesoMedioInput.value || 0)
+
+  let totalCondenacoes = 0
+
+  blocos.forEach(b => {
+
+    const qtd = document.getElementById(b.id)
+    const kg = document.getElementById(b.id+"Kg")
+    const valor = document.getElementById(b.id+"Valor")
+
+    const sim = document.getElementById(b.id+"Sim").checked
+    const nao = document.getElementById(b.id+"Nao").checked
+
+    // 🔹 CONTROLE DE ESTADO
+
+    if (sim) {
+      const resultado = qtd.value
+        ? calcularMedia(Number(qtd.value), pesoMedio)
+        : ""
+
+      kg.value = resultado ? resultado.toFixed(2) : ""
+      kg.readOnly = true
+
+    } else if (nao) {
+      kg.readOnly = false
+
+    } else {
+      qtd.value = ""
+      kg.value = ""
+      valor.value = ""
+      kg.readOnly = false
+    }
+
+    // 🔹 CALCULO ÚNICO DE VALOR
+    const kgNum = Number(kg.value || 0)
+    const val = kgNum * preco
+
+    valor.value = val ? formatarMoeda(val) : ""
+
+  
+
+    // 🔹 COR
+    atualizarCor(qtd)
+    atualizarCor(kg)
+    atualizarCor(valor)
+
+  })
+
+  // 🔹 ATUALIZA TOTAL DAS CONDENAÇÕES
+  const campoTotalCond = document.getElementById("totalCondenacoes")
+
+  campoTotalCond.value = totalCondenacoes
+    ? formatarMoeda(totalCondenacoes)
+    : ""
+
+  atualizarCor(campoTotalCond)
+
+  // 🔹 CHAMA FINANCEIRO
+  calcularFinanceiro()
+  recalcularTudo()
+}
+
+
+function calcularFinanceiro() {
+
+  const valorBrutoNum = parseMoeda(valorBruto.value || "0")
+
+  const totalPerdas = parseMoeda(
+  document.getElementById("totalCondenacoes").value || "0"
+)
+
+  const base = valorBrutoNum - totalPerdas
+
+  const selecionado = document.querySelector('input[name="funrural"]:checked')
+  const tipo = selecionado ? selecionado.value : null
+
+  let resultadoFunrural = 0
+
+  if (tipo === "senar") {
+    resultadoFunrural = base * 0.002
+  } else if (tipo === "aliquota") {
+    resultadoFunrural = base * 0.0163
+  }
+
+  document.getElementById("funruralValor").value =
+    formatarMoeda(resultadoFunrural)
+
+  // 🔥 AQUI É O MAIS IMPORTANTE
+  const outros = parseMoeda(
+    document.getElementById("outrosDescontos").value || "0"
+  )
+
+  // DEBUG (deixe temporariamente)
+  console.log("OUTROS:", outros)
+
+  const liquido =
+    valorBrutoNum -
+    totalPerdas -
+    resultadoFunrural -
+    outros
+
+  document.getElementById("valorLiquido").value =
+    formatarMoeda(liquido)
+}
+
+function formatarMoeda(valor) {
+  return valor.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  })
+}
+
+
+function parseMoeda(valor) {
+  return Number(
+    valor
+      .replace("R$", "")
+      .replace(/\./g, "")
+      .replace(",", ".")
+      .trim()
+  ) || 0
+}
+
+
+
+async function carregar() {
+
+  const id = new URLSearchParams(location.search).get("cardId")
+  if (!id) {
+    console.warn("❌ cardId não encontrado na URL")
+    return
+  }
+
+  try {
+    const res = await fetch("/card/" + id)
+    const card = await res.json()
+
+    console.log("📦 CARD:", card)
+
+    // 🔹 FUNÇÃO PARA PEGAR NÚMERO
+    function getValor(fieldId) {
+      const f = card.fields.find(f => f.field.id === fieldId)
+
+      if (!f || !f.value) return 0
+
+      let valor = f.value
+
+      // trata ["texto"]
+      if (typeof valor === "string" && valor.startsWith("[")) {
+        try {
+          valor = JSON.parse(valor)[0]
+        } catch {
+          valor = 0
+        }
+      }
+
+      // trata número BR
+      if (typeof valor === "string") {
+        valor = valor.replace(",", ".")
+      }
+
+      return Number(valor) || 0
+    }
+
+    // 🔹 FUNÇÃO PARA TEXTO
+    function getTexto(fieldId) {
+      const f = card.fields.find(f => f.field.id === fieldId)
+
+      if (!f || !f.value) return ""
+
+      let valor = f.value
+
+      if (typeof valor === "string" && valor.startsWith("[")) {
+        try {
+          valor = JSON.parse(valor)[0]
+        } catch {
+          valor = ""
+        }
+      }
+
+      return valor
+    }
+
+    // =========================
+    // 🔥 DADOS DO CARD
+    // =========================
+
+    const quantidadeVal = getValor("quantidade")
+    const pesoVal = getValor("peso")
+    const precoVal = getValor("pre_o_kg")
+
+
+    // =========================
+    // 🧾 PREENCHER CAMPOS
+    // =========================
+
+    quantidade.value = quantidadeVal
+    peso.value = pesoVal
+    preco.value = precoVal
+
+    // =========================
+    // 📊 CÁLCULOS
+    // =========================
+
+    if (quantidadeVal > 0) {
+      pesoMedio.value = (pesoVal / quantidadeVal).toFixed(2)
+    }
+
+    valorBruto.value = formatarMoeda(pesoVal * precoVal)
+
+    // =========================
+    // 🏷️ INFO DO CARD (TOPO)
+    // =========================
+
+    const comprador = getTexto("comprador_restored")
+    const fornecedor = getTexto("fornecedor")
+    const frete = getTexto("frete")
+
+    document.getElementById("comprador").innerText = comprador
+    document.getElementById("fornecedor").innerText = fornecedor
+    document.getElementById("frete").innerText = frete
+
+  } catch (err) {
+    console.error("❌ ERRO AO CARREGAR:", err)
+    alert("Erro ao carregar dados do card")
+  }
+}
+
+
+// REFERÊNCIAS
+const quantidade = document.getElementById("quantidade")
+const peso = document.getElementById("peso")
+const precoInput = document.getElementById("preco")
+const pesoMedioInput = document.getElementById("pesoMedio")
+const valorBruto = document.getElementById("valorBruto")
+
+
+// EVENTOS
+window.onload = async () => {
+
+  await carregar()
+
+ blocos.forEach(b => {
+
+  const sim = document.getElementById(b.id+"Sim")
+  const nao = document.getElementById(b.id+"Nao")
+  const qtd = document.getElementById(b.id)
+  const kg = document.getElementById(b.id+"Kg")
+  const valor = document.getElementById(b.id+"Valor")
+
+  // 🔹 estado inicial
+  if (!sim.checked && !nao.checked) {
+    // nenhum marcado → ok
+  }
+
+  // 🔹 SIM
+  sim.addEventListener("change", () => {
+
+    if (sim.checked) {
+      nao.checked = false
+    }
+
+    // nenhum marcado → limpa tudo
+    if (!sim.checked && !nao.checked) {
+      qtd.value = ""
+      kg.value = ""
+      valor.value = ""
+    }
+
+    aplicarCalculos()
+  })
+
+  // 🔹 NÃO
+  nao.addEventListener("change", () => {
+
+    if (nao.checked) {
+      sim.checked = false
+    }
+
+    // nenhum marcado → limpa tudo
+    if (!sim.checked && !nao.checked) {
+      qtd.value = ""
+      kg.value = ""
+      valor.value = ""
+    }
+
+    aplicarCalculos()
+  })
+
+  // 🔹 DIGITAÇÃO QTD
+  qtd.addEventListener("input", () => {
+    aplicarCalculos()
+  })
+
+  // 🔹 DIGITAÇÃO KG
+  kg.addEventListener("input", () => {
+    aplicarCalculos()
+  })
+
+}) 
+
+  // 👇 FUNRURAL
+  document.querySelectorAll('input[name="funrural"]')
+    .forEach(r => r.addEventListener("change", aplicarCalculos))
+
+  // 👇 OUTROS DESCONTOS
+  const outrosInput = document.getElementById("outrosDescontos")
+
+  // 🔹 enquanto digita → recalcula
+  outrosInput.addEventListener("input", () => {
+    aplicarCalculos()
+  })
+
+  // 🔹 ao sair → formata
+  outrosInput.addEventListener("blur", (e) => {
+    let valor = parseMoeda(e.target.value)
+    e.target.value = valor ? formatarMoeda(valor) : ""
+  })
+
+  // 👇 roda tudo ao carregar
+  aplicarCalculos()
+}
+
+
+function recalcularTudo() {
+
+  const precoVal = Number(preco.value || 0)
+
+  function getValor(valorId, kgId) {
+
+    const valorManual = parseMoeda(document.getElementById(valorId).value)
+
+    // 🔥 prioridade para valor digitado
+    if (valorManual > 0) {
+      return valorManual
+    }
+
+    const kg = Number(document.getElementById(kgId).value || 0)
+
+    return kg * precoVal
+  }
+
+  const mortosValor = getValor("mortosValor", "mortosKg")
+  const parciaisValor = getValor("condParciaisValor", "condParciaisKg")
+  const totaisValor = getValor("condTotaisValor", "condTotaisKg")
+  const embutidoValor = getValor("embutidoValor", "embutidoKg")
+
+  const totalCondenacoes =
+    parciaisValor +
+    totaisValor +
+    embutidoValor
+
+  document.getElementById("totalCondenacoes").value =
+    formatarMoeda(totalCondenacoes)
+
+  // se tiver cálculo de líquido
+  const bruto = parseMoeda(valorBruto.value)
+  const funrural = parseMoeda(funruralValor.value)
+  const outros = parseMoeda(outrosDescontos.value)
+
+  const liquido = bruto - funrural - outros - totalCondenacoes
+
+  valorLiquido.value = formatarMoeda(liquido)
+}
+
+[
+  "mortosValor",
+  "condParciaisValor",
+  "condTotaisValor",
+  "embutidoValor",
+  "mortosKg",
+  "condParciaisKg",
+  "condTotaisKg",
+  "embutidoKg",
+  "funruralValor",
+  "outrosDescontos"
+].forEach(id => {
+  const el = document.getElementById(id)
+  if (el) {
+    el.addEventListener("input", recalcularTudo)
+  }
+})
+
+
+
+document.getElementById("salvarBtn")
+  .addEventListener("click", async () => {
+
+    const cardId = new URLSearchParams(location.search).get("cardId")
+
+    if (!cardId) {
+      alert("CardId não encontrado na URL")
+      return
+    }
+
+    const dados = {
+
+      // 🔹 QUANTIDADES
+      mortos: Number(document.getElementById("mortos")?.value || 0),
+      parciais: Number(document.getElementById("condParciais")?.value || 0),
+      totais: Number(document.getElementById("condTotais")?.value || 0),
+      embutido: Number(document.getElementById("embutido")?.value || 0),
+
+      // 🔹 VALORES
+      valorBruto: parseMoeda(document.getElementById("valorBruto")?.value || "0"),
+      funrural: parseMoeda(document.getElementById("funruralValor")?.value || "0"),
+      valorLiquido: parseMoeda(document.getElementById("valorLiquido")?.value || "0"),
+      outros: parseMoeda(document.getElementById("outrosDescontos")?.value || "0"),
+      totalCondenacoes: parseMoeda(document.getElementById("totalCondenacoes")?.value || "0"),
+      mortosTransporte: parseMoeda(document.getElementById("mortosValor").value),
+
+    }
+
+    console.log("📤 DADOS FRONT:", dados)
+
+    try {
+
+     const res = await fetch("/salvar", {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json"
+     },
+     body: JSON.stringify({ cardId, dados })
+    })
+
+      const result = await res.json()
+
+      console.log("📥 RESPOSTA:", result)
+
+      if (!res.ok) {
+        throw new Error(result.erro || "Erro ao salvar")
+      }
+
+      alert("✅ Enviado para o Pipefy!")
+
+      setTimeout(() => {
+       window.open('', '_self')
+      window.close()
+      }, 300)
+
+    } catch (err) {
+      console.error(err)
+      alert("❌ Erro ao enviar: " + err.message)
+    }
+
+  })
+
+</script>
+
+</body>
+</html>
