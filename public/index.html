@@ -6,6 +6,12 @@
 
 <style>
 
+
+#valorMortosTransporte {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+
 .bloco-destaque {
   background: #fff8e1;
   border: 1px solid #ffe082;
@@ -287,6 +293,10 @@ input[readonly] {
          <input id="valorBruto">
      </div>
         
+     <div class="campo-destaque">
+        <span>Valor dos Mortos em Transporte</span>
+        <input id="valorMortosTransporte" readonly>
+     </div>
 
       <br>
      <div class="campo-destaque">
@@ -748,6 +758,9 @@ function recalcularTudo() {
   const parciaisValor = getValor("condParciaisValor", "condParciaisKg")
   const totaisValor = getValor("condTotaisValor", "condTotaisKg")
   const embutidoValor = getValor("embutidoValor", "embutidoKg")
+
+document.getElementById("valorMortosTransporte").value =
+  mortosValor ? formatarMoeda(mortosValor) : ""
 
   // 🔹 verifica se deve incluir mortos
  
