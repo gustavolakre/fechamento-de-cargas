@@ -344,19 +344,21 @@ document.getElementById("blocos").innerHTML =
   blocos.map(b => `
   <div class="bloco ${b.id === "mortos" ? "bloco-destaque" : ""}">
 
-${b.id === "mortos" ? `
-  <div class="titulo-linha">
-    <span class="titulo">${b.nome}</span>
+<div class="titulo-linha">
+  <span class="titulo">${b.nome}</span>
 
-    <div class="radio-inline">
-      <span class="pergunta">Descontar Mortos?</span>
-      <label><input type="radio" name="descontarMortos" value="sim"> Sim</label>
-      <label><input type="radio" name="descontarMortos" value="nao" checked> Não</label>
-    </div>
+  <div class="radio-inline">
+    <span class="pergunta">Descontar?</span>
+    <label>
+      <input type="radio" name="descontar_${b.id}" value="sim">
+      Sim
+    </label>
+    <label>
+      <input type="radio" name="descontar_${b.id}" value="nao" checked>
+      Não
+    </label>
   </div>
-` : `
-  <div class="titulo">${b.nome}</div>
-`}
+</div>
 
 
     <div class="linha-opcao">
@@ -717,6 +719,15 @@ window.onload = async () => {
 }
 
 
+
+  function deveDescontar(id) {
+  const selecionado = document.querySelector(`input[name="descontar_${id}"]:checked`)
+  return selecionado?.value === "sim"
+}
+
+
+
+
 function recalcularTudo() {
 
   const precoVal = Number(preco.value || 0)
@@ -744,11 +755,12 @@ function recalcularTudo() {
   const descontarMortos =
     document.querySelector('input[name="descontarMortos"]:checked')?.value === "sim"
 
-  const totalCondenacoes =
-    parciaisValor +
-    totaisValor +
-    embutidoValor +
-    (descontarMortos ? mortosValor : 0)
+
+const totalCondenacoes =
+  (deveDescontar("mortos") ? mortosValor : 0) +
+  (deveDescontar("condParciais") ? parciaisValor : 0) +
+  (deveDescontar("condTotais") ? totaisValor : 0) +
+  (deveDescontar("embutido") ? embutidoValor : 0)
 
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
