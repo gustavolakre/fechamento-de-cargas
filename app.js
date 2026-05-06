@@ -16,13 +16,14 @@ const __dirname = path.dirname(__filename)
 app.use(cors())
 app.use(express.json())
 
-// 🔥 SERVIR FRONT
-app.use(express.static(path.join(__dirname, "public")))
+const publicPath = path.resolve(__dirname, "public")
 
+console.log("📁 Caminho public:", publicPath)
 
-// 🔥 ROTA ROOT
+app.use(express.static(publicPath))
+
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"))
+  res.sendFile(path.join(publicPath, "index.html"))
 })
 
 console.log("Iniciando servidor...")
