@@ -350,11 +350,11 @@ document.getElementById("blocos").innerHTML =
   <div class="radio-inline">
     <span class="pergunta">Descontar?</span>
     <label>
-      <input type="radio" name="descontar_${b.id}" value="sim">
+      <input type="radio" name="descontar_${b.id}" value="sim" checked>
       Sim
     </label>
     <label>
-      <input type="radio" name="descontar_${b.id}" value="nao" checked>
+      <input type="radio" name="descontar_${b.id}" value="nao">
       Não
     </label>
   </div>
@@ -720,12 +720,10 @@ window.onload = async () => {
 
 
 
-  function deveDescontar(id) {
-  const selecionado = document.querySelector(`input[name="descontar_${id}"]:checked`)
-  return selecionado?.value === "sim"
+function deveDescontar(id) {
+  const el = document.querySelector(`input[name="descontar_${id}"]:checked`)
+  return el?.value === "sim"
 }
-
-
 
 
 function recalcularTudo() {
@@ -752,15 +750,24 @@ function recalcularTudo() {
   const embutidoValor = getValor("embutidoValor", "embutidoKg")
 
   // 🔹 verifica se deve incluir mortos
-  const descontarMortos =
-    document.querySelector('input[name="descontarMortos"]:checked')?.value === "sim"
+ 
+let totalCondenacoes = 0
 
+if (deveDescontar("mortos")) {
+  totalCondenacoes += mortosValor
+}
 
-const totalCondenacoes =
-  (deveDescontar("mortos") ? mortosValor : 0) +
-  (deveDescontar("condParciais") ? parciaisValor : 0) +
-  (deveDescontar("condTotais") ? totaisValor : 0) +
-  (deveDescontar("embutido") ? embutidoValor : 0)
+if (deveDescontar("condParciais")) {
+  totalCondenacoes += parciaisValor
+}
+
+if (deveDescontar("condTotais")) {
+  totalCondenacoes += totaisValor
+}
+
+if (deveDescontar("embutido")) {
+  totalCondenacoes += embutidoValor
+}
 
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
@@ -795,7 +802,7 @@ const totalCondenacoes =
 
 
 // 🔹 NOVO: escuta mudança do radio de mortos
-document.querySelectorAll('input[name="descontarMortos"]')
+document.querySelectorAll('input[name^="descontar_"]')
   .forEach(el => el.addEventListener("change", recalcularTudo))
 
 
