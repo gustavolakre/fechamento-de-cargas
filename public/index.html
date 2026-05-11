@@ -439,12 +439,17 @@ function recalcularTudo() {
   const outros = parseMoeda(outrosDescontos.value || "0")
 
   // 🔥 mortos desconta apenas no líquido
-  const liquido =
-    bruto -
-    mortosValor -
-    totalCondenacoes -
-    funrural -
-    outros
+  const descontoMortos =
+  deveDescontar("mortos")
+    ? mortosValor
+    : 0
+
+ const liquido =
+  bruto -
+  descontoMortos -
+  totalCondenacoes -
+  funrural -
+  outros
 
   document.getElementById("valorLiquido").value =
     formatarMoeda(liquido)
@@ -488,9 +493,14 @@ function calcularFinanceiro() {
   document.getElementById("mortosValor").value || "0"
 )
 
+const descontoMortos =
+  deveDescontar("mortos")
+    ? mortosTransporte
+    : 0
+
 const liquido =
   valorBrutoNum -
-  mortosTransporte -
+  descontoMortos -
   totalPerdas -
   resultadoFunrural -
   outros
