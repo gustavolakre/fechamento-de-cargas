@@ -736,6 +736,8 @@ function deveDescontar(id) {
 }
 
 
+
+
 function recalcularTudo() {
 
   const precoVal = Number(preco.value || 0)
@@ -759,41 +761,33 @@ function recalcularTudo() {
   const totaisValor = getValor("condTotaisValor", "condTotaisKg")
   const embutidoValor = getValor("embutidoValor", "embutidoKg")
 
-document.getElementById("valorMortosTransporte").value =
-  mortosValor ? formatarMoeda(mortosValor) : ""
-
-  // 🔹 verifica se deve incluir mortos
- 
-let totalCondenacoes = 0
-
-if (deveDescontar("mortos")) {
-  totalCondenacoes += mortosValor
-}
-
-if (deveDescontar("condParciais")) {
-  totalCondenacoes += parciaisValor
-}
-
-if (deveDescontar("condTotais")) {
-  totalCondenacoes += totaisValor
-}
-
-if (deveDescontar("embutido")) {
-  totalCondenacoes += embutidoValor
-}
+  // 🔥 mortos NÃO entra nas condenações
+  const totalCondenacoes =
+    parciaisValor +
+    totaisValor +
+    embutidoValor
 
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
 
-  // se tiver cálculo de líquido
   const bruto = parseMoeda(valorBruto.value)
   const funrural = parseMoeda(funruralValor.value)
   const outros = parseMoeda(outrosDescontos.value)
 
-  const liquido = bruto - funrural - outros - totalCondenacoes
+  // 🔥 mortos desconta apenas no líquido
+  const liquido =
+    bruto -
+    mortosValor -
+    totalCondenacoes -
+    funrural -
+    outros
 
   valorLiquido.value = formatarMoeda(liquido)
 }
+
+
+
+
 
 [
   "mortosValor",
