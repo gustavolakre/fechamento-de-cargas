@@ -741,30 +741,17 @@ function recalcularTudo() {
 
   const precoVal = Number(precoInput.value || 0)
 
-  const mortosKg = Number(document.getElementById("mortosKg").value || 0)
-
-  const mortosValor = mortosKg * precoVal
-
-  document.getElementById("mortosValor").value =
-    mortosValor ? formatarMoeda(mortosValor) : ""
-
-  function getValor(valorId, kgId) {
-
-    const valorManual = parseMoeda(document.getElementById(valorId).value)
-
-    if (valorManual > 0) {
-      return valorManual
-    }
-
-    const kg = Number(document.getElementById(kgId).value || 0)
-
-    return kg * precoVal
+  function getValor(valorId) {
+    return parseMoeda(document.getElementById(valorId).value || "0")
   }
 
-  const parciaisValor = getValor("condParciaisValor", "condParciaisKg")
-  const totaisValor = getValor("condTotaisValor", "condTotaisKg")
-  const embutidoValor = getValor("embutidoValor", "embutidoKg")
+  // 🔥 pega valores já calculados na tela
+  const mortosValor = getValor("mortosValor")
+  const parciaisValor = getValor("condParciaisValor")
+  const totaisValor = getValor("condTotaisValor")
+  const embutidoValor = getValor("embutidoValor")
 
+  // 🔥 mortos NÃO entra aqui
   const totalCondenacoes =
     parciaisValor +
     totaisValor +
@@ -773,10 +760,11 @@ function recalcularTudo() {
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
 
-  const bruto = parseMoeda(valorBruto.value)
-  const funrural = parseMoeda(funruralValor.value)
-  const outros = parseMoeda(outrosDescontos.value)
+  const bruto = parseMoeda(valorBruto.value || "0")
+  const funrural = parseMoeda(funruralValor.value || "0")
+  const outros = parseMoeda(outrosDescontos.value || "0")
 
+  // 🔥 mortos desconta só no líquido
   const liquido =
     bruto -
     mortosValor -
@@ -786,7 +774,6 @@ function recalcularTudo() {
 
   valorLiquido.value = formatarMoeda(liquido)
 }
-
 
 
 
