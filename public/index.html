@@ -402,70 +402,50 @@ function atualizarCor(el){
   }
 }
 
-function aplicarCalculos(){
 
-  const preco = Number(precoInput.value || 0)
-  const pesoMedio = Number(pesoMedioInput.value || 0)
 
-  let totalCondenacoes = 0
+function recalcularTudo() {
 
-  blocos.forEach(b => {
+  const mortosValor = parseMoeda(
+    document.getElementById("mortosValor").value || "0"
+  )
 
-    const qtd = document.getElementById(b.id)
-    const kg = document.getElementById(b.id+"Kg")
-    const valor = document.getElementById(b.id+"Valor")
+  const parciaisValor = parseMoeda(
+    document.getElementById("condParciaisValor").value || "0"
+  )
 
-    const sim = document.getElementById(b.id+"Sim").checked
-    const nao = document.getElementById(b.id+"Nao").checked
+  const totaisValor = parseMoeda(
+    document.getElementById("condTotaisValor").value || "0"
+  )
 
-    // 🔹 CONTROLE DE ESTADO
+  const embutidoValor = parseMoeda(
+    document.getElementById("embutidoValor").value || "0"
+  )
 
-    if (sim) {
-      const resultado = qtd.value
-        ? calcularMedia(Number(qtd.value), pesoMedio)
-        : ""
+  // 🔥 mortos NÃO entra no total
+  const totalCondenacoes =
+    parciaisValor +
+    totaisValor +
+    embutidoValor
 
-      kg.value = resultado ? resultado.toFixed(2) : ""
-      kg.readOnly = true
+  document.getElementById("totalCondenacoes").value =
+    formatarMoeda(totalCondenacoes)
 
-    } else if (nao) {
-      kg.readOnly = false
+  const bruto = parseMoeda(valorBruto.value || "0")
+  const funrural = parseMoeda(funruralValor.value || "0")
+  const outros = parseMoeda(outrosDescontos.value || "0")
 
-    } else {
-      qtd.value = ""
-      kg.value = ""
-      valor.value = ""
-      kg.readOnly = false
-    }
+  // 🔥 mortos entra só no líquido
+  const liquido =
+    bruto -
+    mortosValor -
+    totalCondenacoes -
+    funrural -
+    outros
 
-    // 🔹 CALCULO ÚNICO DE VALOR
-    const kgNum = Number(kg.value || 0)
-    const val = kgNum * preco
-
-    valor.value = val ? formatarMoeda(val) : ""
-
-  
-
-    // 🔹 COR
-    atualizarCor(qtd)
-    atualizarCor(kg)
-    atualizarCor(valor)
-
-  })
-
-  // 🔹 ATUALIZA TOTAL DAS CONDENAÇÕES
-  const campoTotalCond = document.getElementById("totalCondenacoes")
-
-  campoTotalCond.value = totalCondenacoes
-    ? formatarMoeda(totalCondenacoes)
-    : ""
-
-  atualizarCor(campoTotalCond)
-
-  // 🔹 CHAMA FINANCEIRO
-  calcularFinanceiro()
-  recalcularTudo()
+  valorLiquido.value = formatarMoeda(liquido)
 }
+
 
 
 function calcularFinanceiro() {
