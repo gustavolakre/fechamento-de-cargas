@@ -412,7 +412,7 @@ function recalcularTudo() {
     )
   }
 
-  // 🔹 valores dos blocos
+  // 🔹 valores
   const mortosValor = getValor("mortosValor")
   const parciaisValor = getValor("condParciaisValor")
   const totaisValor = getValor("condTotaisValor")
@@ -424,7 +424,7 @@ function recalcularTudo() {
       ? formatarMoeda(mortosValor)
       : ""
 
-  // 🔥 mortos NÃO entra no total das condenações
+  // 🔹 total condenações VISUAL
   const totalCondenacoes =
     parciaisValor +
     totaisValor +
@@ -433,27 +433,47 @@ function recalcularTudo() {
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
 
+  // 🔹 descontos conforme rádio
+  const descontoMortos =
+    deveDescontar("mortos")
+      ? mortosValor
+      : 0
+
+  const descontoParciais =
+    deveDescontar("condParciais")
+      ? parciaisValor
+      : 0
+
+  const descontoTotais =
+    deveDescontar("condTotais")
+      ? totaisValor
+      : 0
+
+  const descontoEmbutido =
+    deveDescontar("embutido")
+      ? embutidoValor
+      : 0
+
   // 🔹 financeiros
   const bruto = parseMoeda(valorBruto.value || "0")
   const funrural = parseMoeda(funruralValor.value || "0")
   const outros = parseMoeda(outrosDescontos.value || "0")
 
-  // 🔥 mortos desconta apenas no líquido
-  const descontoMortos =
-  deveDescontar("mortos")
-    ? mortosValor
-    : 0
-
- const liquido =
-  bruto -
-  descontoMortos -
-  totalCondenacoes -
-  funrural -
-  outros
+  // 🔥 líquido
+  const liquido =
+    bruto -
+    descontoMortos -
+    descontoParciais -
+    descontoTotais -
+    descontoEmbutido -
+    funrural -
+    outros
 
   document.getElementById("valorLiquido").value =
     formatarMoeda(liquido)
 }
+
+
 
 
 
