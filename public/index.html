@@ -717,46 +717,6 @@ function deveDescontar(id) {
 
 
 
-function recalcularTudo() {
-
-  const precoVal = Number(precoInput.value || 0)
-
-  function getValor(valorId) {
-    return parseMoeda(document.getElementById(valorId).value || "0")
-  }
-
-  // 🔥 pega valores já calculados na tela
-  const mortosValor = getValor("mortosValor")
-  const parciaisValor = getValor("condParciaisValor")
-  const totaisValor = getValor("condTotaisValor")
-  const embutidoValor = getValor("embutidoValor")
-
-  // 🔥 mortos NÃO entra aqui
-  const totalCondenacoes =
-    parciaisValor +
-    totaisValor +
-    embutidoValor
-
-  document.getElementById("totalCondenacoes").value =
-    formatarMoeda(totalCondenacoes)
-
-  const bruto = parseMoeda(valorBruto.value || "0")
-  const funrural = parseMoeda(funruralValor.value || "0")
-  const outros = parseMoeda(outrosDescontos.value || "0")
-
-  // 🔥 mortos desconta só no líquido
-  const liquido =
-    bruto -
-    mortosValor -
-    totalCondenacoes -
-    funrural -
-    outros
-
-  valorLiquido.value = formatarMoeda(liquido)
-}
-
-
-
 [
   "mortosValor",
   "condParciaisValor",
