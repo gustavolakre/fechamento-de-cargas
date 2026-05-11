@@ -737,16 +737,21 @@ function deveDescontar(id) {
 
 
 
-
 function recalcularTudo() {
 
-  const precoVal = Number(preco.value || 0)
+  const precoVal = Number(precoInput.value || 0)
+
+  const mortosKg = Number(document.getElementById("mortosKg").value || 0)
+
+  const mortosValor = mortosKg * precoVal
+
+  document.getElementById("mortosValor").value =
+    mortosValor ? formatarMoeda(mortosValor) : ""
 
   function getValor(valorId, kgId) {
 
     const valorManual = parseMoeda(document.getElementById(valorId).value)
 
-    // 🔥 prioridade para valor digitado
     if (valorManual > 0) {
       return valorManual
     }
@@ -756,12 +761,10 @@ function recalcularTudo() {
     return kg * precoVal
   }
 
-  const mortosValor = getValor("mortosValor", "mortosKg")
   const parciaisValor = getValor("condParciaisValor", "condParciaisKg")
   const totaisValor = getValor("condTotaisValor", "condTotaisKg")
   const embutidoValor = getValor("embutidoValor", "embutidoKg")
 
-  // 🔥 mortos NÃO entra nas condenações
   const totalCondenacoes =
     parciaisValor +
     totaisValor +
@@ -774,7 +777,6 @@ function recalcularTudo() {
   const funrural = parseMoeda(funruralValor.value)
   const outros = parseMoeda(outrosDescontos.value)
 
-  // 🔥 mortos desconta apenas no líquido
   const liquido =
     bruto -
     mortosValor -
@@ -784,7 +786,6 @@ function recalcularTudo() {
 
   valorLiquido.value = formatarMoeda(liquido)
 }
-
 
 
 
