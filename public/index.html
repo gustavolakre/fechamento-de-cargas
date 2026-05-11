@@ -484,11 +484,16 @@ function calcularFinanceiro() {
   // DEBUG (deixe temporariamente)
   console.log("OUTROS:", outros)
 
-  const liquido =
-    valorBrutoNum -
-    totalPerdas -
-    resultadoFunrural -
-    outros
+  const mortosTransporte = parseMoeda(
+  document.getElementById("mortosValor").value || "0"
+)
+
+const liquido =
+  valorBrutoNum -
+  mortosTransporte -
+  totalPerdas -
+  resultadoFunrural -
+  outros
 
   document.getElementById("valorLiquido").value =
     formatarMoeda(liquido)
@@ -775,7 +780,6 @@ function aplicarCalculos() {
     el.addEventListener("input", recalcularTudo)
   }
 })
-
 
 
 // 🔹 NOVO: escuta mudança do radio de mortos
