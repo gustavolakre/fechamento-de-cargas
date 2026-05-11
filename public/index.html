@@ -406,23 +406,25 @@ function atualizarCor(el){
 
 function recalcularTudo() {
 
-  const mortosValor = parseMoeda(
-    document.getElementById("mortosValor").value || "0"
-  )
+  function getValor(valorId) {
+    return parseMoeda(
+      document.getElementById(valorId).value || "0"
+    )
+  }
 
-  const parciaisValor = parseMoeda(
-    document.getElementById("condParciaisValor").value || "0"
-  )
+  // 🔹 valores dos blocos
+  const mortosValor = getValor("mortosValor")
+  const parciaisValor = getValor("condParciaisValor")
+  const totaisValor = getValor("condTotaisValor")
+  const embutidoValor = getValor("embutidoValor")
 
-  const totaisValor = parseMoeda(
-    document.getElementById("condTotaisValor").value || "0"
-  )
+  // 🔹 mostra mortos no quadro da direita
+  document.getElementById("valorMortosTransporte").value =
+    mortosValor > 0
+      ? formatarMoeda(mortosValor)
+      : ""
 
-  const embutidoValor = parseMoeda(
-    document.getElementById("embutidoValor").value || "0"
-  )
-
-  // 🔥 mortos NÃO entra no total
+  // 🔥 mortos NÃO entra no total das condenações
   const totalCondenacoes =
     parciaisValor +
     totaisValor +
@@ -431,11 +433,12 @@ function recalcularTudo() {
   document.getElementById("totalCondenacoes").value =
     formatarMoeda(totalCondenacoes)
 
+  // 🔹 financeiros
   const bruto = parseMoeda(valorBruto.value || "0")
   const funrural = parseMoeda(funruralValor.value || "0")
   const outros = parseMoeda(outrosDescontos.value || "0")
 
-  // 🔥 mortos entra só no líquido
+  // 🔥 mortos desconta apenas no líquido
   const liquido =
     bruto -
     mortosValor -
@@ -443,7 +446,8 @@ function recalcularTudo() {
     funrural -
     outros
 
-  valorLiquido.value = formatarMoeda(liquido)
+  document.getElementById("valorLiquido").value =
+    formatarMoeda(liquido)
 }
 
 
