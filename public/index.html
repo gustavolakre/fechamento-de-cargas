@@ -479,13 +479,33 @@ function recalcularTudo() {
 
 function calcularFinanceiro() {
 
+  function getValorCampo(valorId) {
+    return parseMoeda(
+      document.getElementById(valorId).value || "0"
+    )
+  }
+
+  const mortosValor = getValorCampo("mortosValor")
+  const parciaisValor = getValorCampo("condParciaisValor")
+  const totaisValor = getValorCampo("condTotaisValor")
+  const embutidoValor = getValorCampo("embutidoValor")
+
+  const descontoMortos = deveDescontar("mortos") ? mortosValor : 0
+  const descontoParciais = deveDescontar("condParciais") ? parciaisValor : 0
+  const descontoTotais = deveDescontar("condTotais") ? totaisValor : 0
+  const descontoEmbutido = deveDescontar("embutido") ? embutidoValor : 0
+
   const valorBrutoNum = parseMoeda(valorBruto.value || "0")
 
-  const totalPerdas = parseMoeda(
-  document.getElementById("totalCondenacoes").value || "0"
-)
+  // Base do Funrural/Senar: bruto menos mortos e condenações (quando forem descontados no fechamento)
+  const base =
+    valorBrutoNum -
+    descontoMortos -
+    descontoParciais -
+    descontoTotais -
+    descontoEmbutido
 
-  const base = valorBrutoNum - totalPerdas
+  const baseFunrural = Math.max(0, base)
 
   const selecionado = document.querySelector('input[name="funrural"]:checked')
   const tipo = selecionado ? selecionado.value : null
@@ -493,40 +513,13 @@ function calcularFinanceiro() {
   let resultadoFunrural = 0
 
   if (tipo === "senar") {
-    resultadoFunrural = base * 0.002
+    resultadoFunrural = baseFunrural * 0.002
   } else if (tipo === "aliquota") {
-    resultadoFunrural = base * 0.0163
+    resultadoFunrural = baseFunrural * 0.0163
   }
 
   document.getElementById("funruralValor").value =
     formatarMoeda(resultadoFunrural)
-
-  // 🔥 AQUI É O MAIS IMPORTANTE
-  const outros = parseMoeda(
-    document.getElementById("outrosDescontos").value || "0"
-  )
-
-  // DEBUG (deixe temporariamente)
-  console.log("OUTROS:", outros)
-
-  const mortosTransporte = parseMoeda(
-  document.getElementById("mortosValor").value || "0"
-)
-
-const descontoMortos =
-  deveDescontar("mortos")
-    ? mortosTransporte
-    : 0
-
-const liquido =
-  valorBrutoNum -
-  descontoMortos -
-  totalPerdas -
-  resultadoFunrural -
-  outros
-
-  document.getElementById("valorLiquido").value =
-    formatarMoeda(liquido)
 }
 
 function formatarMoeda(valor) {
@@ -728,6 +721,16 @@ window.onload = async () => {
   // 👇 FUNRURAL
   document.querySelectorAll('input[name="funrural"]')
     .forEach(r => r.addEventListener("change", aplicarCalculos))
+
+  // 👇 VALOR BRUTO (edição manual)
+  valorBruto.addEventListener("input", () => {
+    aplicarCalculos()
+  })
+  valorBruto.addEventListener("blur", (e) => {
+    let v = parseMoeda(e.target.value)
+    e.target.value = v ? formatarMoeda(v) : ""
+    aplicarCalculos()
+  })
 
   // 👇 OUTROS DESCONTOS
   const outrosInput = document.getElementById("outrosDescontos")
